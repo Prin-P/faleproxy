@@ -18,14 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showError('Please enter a URL');
             return;
         }
-
-        // Remove any existing http:// or https:// to avoid double protocols
-        let processedUrl = url.replace(/^(https?:\/\/)/, '');
-        
-        // Add http:// if no protocol is present
-        if (!processedUrl.match(/^[a-zA-Z]+:\/\//)) {
-            processedUrl = `http://${processedUrl}`;
-        }
         
         // Show loading indicator
         loadingElement.classList.remove('hidden');
@@ -38,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ url: processedUrl })
+                body: JSON.stringify({ url })
             });
             
             const data = await response.json();
@@ -48,8 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // Update the info bar
-            originalUrlElement.textContent = processedUrl;
-            originalUrlElement.href = processedUrl;
+            originalUrlElement.textContent = data.url;
+            originalUrlElement.href = data.url;
             pageTitleElement.textContent = data.title || 'No title';
             
             // Create a sandboxed iframe to display the content
