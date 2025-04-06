@@ -35,10 +35,11 @@ jobs:
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
       with:
-        name: coverage-report
+        name: coverage-report-node-${{ matrix.node-version }}
         path: coverage/
 
   Deploy-Preview:
+    needs: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
