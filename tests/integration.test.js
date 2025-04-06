@@ -5,13 +5,22 @@ const request = require('supertest');
 const app = require('../app');
 
 describe('Integration Tests', () => {
+  // Save original console.error
+  const originalConsoleError = console.error;
+  
   beforeAll(() => {
     // Mock external HTTP requests
     nock.disableNetConnect();
     nock.enableNetConnect('127.0.0.1');
+    
+    // Silence console.error during tests to avoid CI failures
+    console.error = jest.fn();
   });
 
   afterAll(() => {
+    // Restore original console.error
+    console.error = originalConsoleError;
+    
     nock.cleanAll();
     nock.enableNetConnect();
   });
@@ -52,10 +61,17 @@ describe('Integration Tests', () => {
   });
 
   test('Should handle invalid URLs', async () => {
+    // Verify that the app returns a 500 status for invalid URLs
     await request(app)
       .post('/fetch')
       .send({ url: 'not-a-valid-url' })
       .expect(500);
+    
+    // Verify that console.error was called with the expected message
+    expect(console.error).toHaveBeenCalledWith(
+      'Error fetching URL:',
+      expect.stringContaining('Disallowed net connect')
+    );
   });
 
   test('Should handle missing URL parameter', async () => {
