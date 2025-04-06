@@ -106,3 +106,25 @@ describe('Yale to Fale replacement logic', () => {
     expect(modifiedHtml).toContain('FALE University, Fale College, and fale medical school');
   });
 });
+
+// Direct tests for the replaceYaleWithFale function
+describe('replaceYaleWithFale function', () => {
+  test('should replace Yale with Fale in various cases', () => {
+    expect(app.replaceYaleWithFale('Yale University')).toBe('Fale University');
+    expect(app.replaceYaleWithFale('YALE UNIVERSITY')).toBe('FALE UNIVERSITY');
+    expect(app.replaceYaleWithFale('yale university')).toBe('fale university');
+    expect(app.replaceYaleWithFale('Welcome to Yale!')).toBe('Welcome to Fale!');
+  });
+
+  test('should not modify text without Yale references', () => {
+    expect(app.replaceYaleWithFale('Harvard University')).toBe('Harvard University');
+    expect(app.replaceYaleWithFale('')).toBe('');
+    expect(app.replaceYaleWithFale('This is a test page with no Yale references.')).toBe('This is a test page with no Yale references.');
+  });
+
+  test('should handle mixed content correctly', () => {
+    expect(app.replaceYaleWithFale('Yale and Harvard are both Ivy League schools')).toBe('Fale and Harvard are both Ivy League schools');
+    // The function actually does replace yale.edu with fale.edu in plain text
+    expect(app.replaceYaleWithFale('Contact: info@yale.edu or visit yale.edu')).toBe('Contact: info@fale.edu or visit fale.edu');
+  });
+});
